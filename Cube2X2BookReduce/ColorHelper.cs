@@ -36,7 +36,7 @@
             }
             else if (color == Color.LightGray)
             {
-                return "g";
+                return "w";
             }
 
             return "?";
@@ -71,7 +71,7 @@
             }
             else if (color == 5)
             {
-                return "g";
+                return "w";
             }
 
             return "?";
@@ -104,7 +104,7 @@
             {
                 return Color.Violet;
             }
-            else if (ch == 'g')
+            else if (ch == 'w')
             {
                 return Color.LightGray;
             }
@@ -139,7 +139,7 @@
             {
                 return 4;
             }
-            else if (ch == 'g')
+            else if (ch == 'w')
             {
                 return 5;
             }

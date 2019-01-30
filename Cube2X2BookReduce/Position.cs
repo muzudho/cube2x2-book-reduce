@@ -76,9 +76,9 @@
             var pos = new Position();
 
             // 全ての色をセットする。
-            for (int tileI = 0; tileI < 24; tileI++)
+            for (int tile = 0; tile < 24; tile++)
             {
-                pos.SetTileColor(tileI, ColorHelper.GetNumberFromAlphabet(position[tileI]));
+                pos.SetTileColor(tile, ColorHelper.GetNumberFromAlphabet(position[tile]));
             }
 
             return pos;

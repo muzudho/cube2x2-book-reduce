@@ -4,12 +4,9 @@
 namespace Grayscale.Cube2X2BookReduce
 {
     using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
-    using System.Threading.Tasks;
-    using System.IO;
     using System.Globalization;
-    using System.Diagnostics;
+    using System.IO;
+    using System.Text;
 
     class Program
     {
@@ -134,6 +131,7 @@ namespace Grayscale.Cube2X2BookReduce
             book.Clear();
             if (File.Exists(Program.BOOK_PATH))
             {
+                int row = 0;
                 foreach (var line in File.ReadAllLines(Program.BOOK_PATH))
                 {
                     var tokens = line.Split(' ');
@@ -165,6 +163,12 @@ namespace Grayscale.Cube2X2BookReduce
                     {
                         book.Add(tokens[0], record);
                     }
+
+                    Console.WriteLine(string.Format(
+                        CultureInfo.CurrentCulture,
+                        "Row: {0}.",
+                        row));
+                    row++;
                 }
             }
         }
