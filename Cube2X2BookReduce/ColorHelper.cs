@@ -39,7 +39,8 @@
                 return "w";
             }
 
-            return "?";
+            // エラー。
+            return color.Name;
         }
 
         /// <summary>
@@ -74,7 +75,8 @@
                 return "w";
             }
 
-            return "?";
+            // エラー。
+            return color.ToString();
         }
 
         /// <summary>
