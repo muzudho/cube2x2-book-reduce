@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.28307.168
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "cube2x2-book-reduce", "cube2x2-book-reduce\cube2x2-book-reduce.csproj", "{77F84DAC-FC9E-4CDD-94C5-DCF7562A8872}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cube2X2BookReduce", "Cube2X2BookReduce\Cube2X2BookReduce.csproj", "{77F84DAC-FC9E-4CDD-94C5-DCF7562A8872}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

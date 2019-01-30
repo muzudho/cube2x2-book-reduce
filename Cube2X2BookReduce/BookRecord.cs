@@ -1,4 +1,4 @@
-﻿namespace Grayscale.Cube2x2BookReduce
+﻿namespace Grayscale.Cube2X2BookReduce
 {
     using System.Globalization;
 

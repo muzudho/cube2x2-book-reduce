@@ -1,6 +1,8 @@
-﻿namespace Grayscale.Cube2x2BookReduce
+﻿using System;
+
+[assembly: CLSCompliant(true)]
+namespace Grayscale.Cube2X2BookReduce
 {
-    using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Text;
@@ -10,6 +12,9 @@
 
     class Program
     {
+        private const string BOOK_PATH = "./book.txt";
+        private const string BOOK_MIN_PATH = "./book-min.txt";
+
         /// <summary>
         /// 定跡。
         /// </summary>
@@ -22,7 +27,7 @@
             ReadBook();
 
             // 上書き保存。
-            File.WriteAllText("./book.txt", ToBookText());
+            File.WriteAllText(Program.BOOK_MIN_PATH, ToBookText());
         }
 
         /// <summary>
@@ -31,12 +36,16 @@
         public static void ReadBook()
         {
             book.Clear();
-            if (File.Exists("./book.txt"))
+            if (File.Exists(Program.BOOK_PATH))
             {
-                foreach (var line in File.ReadAllLines("./book.txt"))
+                foreach (var line in File.ReadAllLines(Program.BOOK_PATH))
                 {
                     var tokens = line.Split(' ');
-                    book.Add(tokens[0], new BookRecord(tokens[1], int.Parse(tokens[2]), int.Parse(tokens[3])));
+                    var record = new BookRecord(
+                        tokens[1],
+                        int.Parse(tokens[2], CultureInfo.CurrentCulture),
+                        int.Parse(tokens[3], CultureInfo.CurrentCulture));
+                    book.Add(tokens[0], record);
                 }
             }
         }
@@ -57,7 +66,7 @@
                         CultureInfo.CurrentCulture,
                         "{0} {1}",
                         record.Key,
-                        record.Value.ToText()));
+                        record.Value.Handle));
                 }
             }
 
