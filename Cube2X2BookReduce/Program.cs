@@ -9,6 +9,7 @@ namespace Grayscale.Cube2X2BookReduce
     using System.Threading.Tasks;
     using System.IO;
     using System.Globalization;
+    using System.Diagnostics;
 
     class Program
     {
@@ -31,6 +32,101 @@ namespace Grayscale.Cube2X2BookReduce
         }
 
         /// <summary>
+        /// 正規化をする。
+        /// つまり、64個の局面を作り、そのうち代表的な１つを選ぶ。
+        /// </summary>
+        public static Position Normalize(Position posSource)
+        {
+            var isomorphic = new Position[64];
+
+            for (int i = 0; i < 64; i++)
+            {
+                var pos = Position.Clone(posSource);
+                isomorphic[i] = pos;
+
+                if (i % 4 == 1)
+                {
+                    // +X
+                    pos.RotateView(2);
+                }
+                else if (i % 4 == 2)
+                {
+                    // +X
+                    pos.RotateView(2);
+                    pos.RotateView(2);
+                }
+                else if (i % 4 == 3)
+                {
+                    // +X
+                    pos.RotateView(2);
+                    pos.RotateView(2);
+                    pos.RotateView(2);
+                }
+
+                if (i / 4 % 4 == 1)
+                {
+                    // +Y
+                    pos.RotateView(0);
+                }
+                else if (i / 4 % 4 == 2)
+                {
+                    // +Y
+                    pos.RotateView(0);
+                    pos.RotateView(0);
+                }
+                else if (i / 4 % 4 == 3)
+                {
+                    // +Y
+                    pos.RotateView(0);
+                    pos.RotateView(0);
+                    pos.RotateView(0);
+                }
+
+                if (i / 16 % 4 == 1)
+                {
+                    // +Z
+                    pos.RotateView(1);
+                }
+                else if (i / 4 % 4 == 2)
+                {
+                    // +Z
+                    pos.RotateView(1);
+                    pos.RotateView(1);
+                }
+                else if (i / 4 % 4 == 3)
+                {
+                    // +Z
+                    pos.RotateView(1);
+                    pos.RotateView(1);
+                    pos.RotateView(1);
+                }
+            }
+
+            var isomorphicText = new string[64];
+            for (int i = 0; i < 64; i++)
+            {
+                isomorphicText[i] = isomorphic[i].GetBoardText();
+            }
+
+            // ソートする。
+            System.Array.Sort(isomorphicText);
+
+            /*
+            // 確認表示。
+            for (int i = 0; i < 64; i++)
+            {
+                Trace.WriteLine(string.Format(
+                    CultureInfo.CurrentCulture,
+                    "{0} {1}",
+                    i,
+                    isomorphicText[i]));
+            }
+            */
+
+            return Position.Parse(isomorphicText[0]);
+        }
+
+        /// <summary>
         /// 定跡読込。
         /// </summary>
         public static void ReadBook()
@@ -41,11 +137,34 @@ namespace Grayscale.Cube2X2BookReduce
                 foreach (var line in File.ReadAllLines(Program.BOOK_PATH))
                 {
                     var tokens = line.Split(' ');
-                    var record = new BookRecord(
-                        tokens[1],
-                        int.Parse(tokens[2], CultureInfo.CurrentCulture),
-                        int.Parse(tokens[3], CultureInfo.CurrentCulture));
-                    book.Add(tokens[0], record);
+
+                    // 現局面を正規化する。
+                    tokens[0] = Normalize(Position.Parse(tokens[0])).GetBoardText();
+
+                    // 前局面を正規化する。
+                    tokens[1] = Normalize(Position.Parse(tokens[1])).GetBoardText();
+
+                    // 次の一手。
+                    var move = int.Parse(tokens[2], CultureInfo.CurrentCulture);
+
+                    // 手数。
+                    var ply = int.Parse(tokens[3], CultureInfo.CurrentCulture);
+
+                    var record = new BookRecord(tokens[1], move, ply);
+
+                    // 既に追加されているやつがあれば、手数を比較する。
+                    if (book.ContainsKey(tokens[0]))
+                    {
+                        if (ply < book[tokens[0]].Ply)
+                        {
+                            // 短くなっていれば更新する。
+                            book[tokens[0]] = record;
+                        }
+                    }
+                    else
+                    {
+                        book.Add(tokens[0], record);
+                    }
                 }
             }
         }
