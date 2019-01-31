@@ -8,16 +8,30 @@ namespace Grayscale.Cube2X2BookReduce
     using System.IO;
     using System.Text;
 
-    class Program
+    /// <summary>
+    /// プログラム。
+    /// </summary>
+    public static class Program
     {
-        private const string BOOK_PATH = "./book.txt";
-        private const string BOOK_MIN_PATH = "./book-min.txt";
+        /// <summary>
+        /// 定跡ファイルへのパス。
+        /// </summary>
+        private const string BookPath = "./book.txt";
+
+        /// <summary>
+        /// サイズを小さくした定跡ファイルへのパス。
+        /// </summary>
+        private const string BookMinPath = "./book-min.txt";
 
         /// <summary>
         /// 定跡。
         /// </summary>
         private static Dictionary<string, BookRecord> book;
 
+        /// <summary>
+        /// エントリーポイント。
+        /// </summary>
+        /// <param name="args">コマンドライン引数。</param>
         public static void Main(string[] args)
         {
             book = new Dictionary<string, BookRecord>();
@@ -25,102 +39,7 @@ namespace Grayscale.Cube2X2BookReduce
             ReadBook();
 
             // 上書き保存。
-            File.WriteAllText(Program.BOOK_MIN_PATH, ToBookText());
-        }
-
-        /// <summary>
-        /// 正規化をする。
-        /// つまり、64個の局面を作り、そのうち代表的な１つを選ぶ。
-        /// </summary>
-        public static Position Normalize(Position posSource)
-        {
-            var isomorphic = new Position[64];
-
-            for (int i = 0; i < 64; i++)
-            {
-                var pos = Position.Clone(posSource);
-                isomorphic[i] = pos;
-
-                if (i % 4 == 1)
-                {
-                    // +X
-                    pos.RotateView(2);
-                }
-                else if (i % 4 == 2)
-                {
-                    // +X
-                    pos.RotateView(2);
-                    pos.RotateView(2);
-                }
-                else if (i % 4 == 3)
-                {
-                    // +X
-                    pos.RotateView(2);
-                    pos.RotateView(2);
-                    pos.RotateView(2);
-                }
-
-                if (i / 4 % 4 == 1)
-                {
-                    // +Y
-                    pos.RotateView(0);
-                }
-                else if (i / 4 % 4 == 2)
-                {
-                    // +Y
-                    pos.RotateView(0);
-                    pos.RotateView(0);
-                }
-                else if (i / 4 % 4 == 3)
-                {
-                    // +Y
-                    pos.RotateView(0);
-                    pos.RotateView(0);
-                    pos.RotateView(0);
-                }
-
-                if (i / 16 % 4 == 1)
-                {
-                    // +Z
-                    pos.RotateView(1);
-                }
-                else if (i / 4 % 4 == 2)
-                {
-                    // +Z
-                    pos.RotateView(1);
-                    pos.RotateView(1);
-                }
-                else if (i / 4 % 4 == 3)
-                {
-                    // +Z
-                    pos.RotateView(1);
-                    pos.RotateView(1);
-                    pos.RotateView(1);
-                }
-            }
-
-            var isomorphicText = new string[64];
-            for (int i = 0; i < 64; i++)
-            {
-                isomorphicText[i] = isomorphic[i].GetBoardText();
-            }
-
-            // ソートする。
-            System.Array.Sort(isomorphicText);
-
-            /*
-            // 確認表示。
-            for (int i = 0; i < 64; i++)
-            {
-                Trace.WriteLine(string.Format(
-                    CultureInfo.CurrentCulture,
-                    "{0} {1}",
-                    i,
-                    isomorphicText[i]));
-            }
-            */
-
-            return Position.Parse(isomorphicText[0]);
+            File.WriteAllText(Program.BookMinPath, ToBookText());
         }
 
         /// <summary>
@@ -129,21 +48,25 @@ namespace Grayscale.Cube2X2BookReduce
         public static void ReadBook()
         {
             book.Clear();
-            if (File.Exists(Program.BOOK_PATH))
+            if (File.Exists(Program.BookPath))
             {
                 int row = 0;
-                foreach (var line in File.ReadAllLines(Program.BOOK_PATH))
+                foreach (var line in File.ReadAllLines(Program.BookPath))
                 {
                     var tokens = line.Split(' ');
 
-                    // 現局面を正規化する。
-                    tokens[0] = Normalize(Position.Parse(tokens[0])).GetBoardText();
-
-                    // 前局面を正規化する。
-                    tokens[1] = Normalize(Position.Parse(tokens[1])).GetBoardText();
-
                     // 次の一手。
                     var move = int.Parse(tokens[2], CultureInfo.CurrentCulture);
+
+                    // 現局面を正規化する。
+                    var currentPositionNormalizer = new Normalizer();
+                    (var normalizedCurrentPosition, var normalizedMove) = currentPositionNormalizer.Normalize(Position.Parse(tokens[0]), move);
+                    tokens[0] = normalizedCurrentPosition.BoardText;
+
+                    // 前局面を正規化する。
+                    var previousPositionNormalizer = new Normalizer();
+                    (var normalizedPreviousPosition, var unusedMove) = previousPositionNormalizer.Normalize(Position.Parse(tokens[1]), 0);
+                    tokens[1] = normalizedPreviousPosition.BoardText;
 
                     // 手数。
                     var ply = int.Parse(tokens[3], CultureInfo.CurrentCulture);

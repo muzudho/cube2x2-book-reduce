@@ -1,6 +1,7 @@
 ﻿namespace Grayscale.Cube2X2BookReduce
 {
     using System.Drawing;
+    using System.Globalization;
 
     /// <summary>
     /// 色に関するユーティリティー。
@@ -76,7 +77,7 @@
             }
 
             // エラー。
-            return color.ToString();
+            return color.ToString(CultureInfo.CurrentCulture);
         }
 
         /// <summary>
