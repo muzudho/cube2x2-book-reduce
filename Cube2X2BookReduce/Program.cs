@@ -7,6 +7,7 @@ namespace Grayscale.Cube2X2BookReduce
     using System.Globalization;
     using System.IO;
     using System.Text;
+    using Grayscale.Cube2X2PositionNormalize;
 
     /// <summary>
     /// プログラム。
@@ -60,12 +61,12 @@ namespace Grayscale.Cube2X2BookReduce
 
                     // 現局面を正規化する。
                     var currentPositionNormalizer = new Normalizer();
-                    (var normalizedCurrentPosition, var normalizedMove) = currentPositionNormalizer.Normalize(Position.Parse(tokens[0]), move);
+                    (var normalizedCurrentPosition, var normalizedMove) = currentPositionNormalizer.Normalize(tokens[0], move);
                     tokens[0] = normalizedCurrentPosition.BoardText;
 
                     // 前局面を正規化する。
                     var previousPositionNormalizer = new Normalizer();
-                    (var normalizedPreviousPosition, var unusedMove) = previousPositionNormalizer.Normalize(Position.Parse(tokens[1]), 0);
+                    (var normalizedPreviousPosition, var unusedMove) = previousPositionNormalizer.Normalize(tokens[1], 0);
                     tokens[1] = normalizedPreviousPosition.BoardText;
 
                     // 手数。

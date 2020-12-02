@@ -44,6 +44,9 @@
     <AssemblyOriginatorKeyFile>Cube2X2BookReduce.pfx</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Grayscale.Cube2X2PositionNormalize">
+      <HintPath>..\..\cube2x2-position-normalize\bin\Release\Grayscale.Cube2X2PositionNormalize.exe</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
@@ -60,7 +63,6 @@
   <ItemGroup>
     <Compile Include="BookRecord.cs" />
     <Compile Include="ColorHelper.cs" />
-    <Compile Include="Normalizer.cs" />
     <Compile Include="Position.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
